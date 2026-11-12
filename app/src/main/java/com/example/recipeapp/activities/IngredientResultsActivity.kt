@@ -39,9 +39,8 @@ class IngredientResultsActivity : AppCompatActivity() {
 
         rvLabels.layoutManager = LinearLayoutManager(this)
 
-        val uriString = intent.getStringExtra("image_uri")
-        if (uriString != null) {
-            val uri = Uri.parse(uriString)
+        val uri: Uri? = intent.data ?: intent.getStringExtra("image_uri")?.let { Uri.parse(it) }
+        if (uri != null) {
             Glide.with(this).load(uri).into(imgCaptured)
             processImageWithMLKit(uri)
         } else {

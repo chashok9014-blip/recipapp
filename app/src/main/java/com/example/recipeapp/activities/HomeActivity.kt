@@ -46,7 +46,9 @@ class HomeActivity : AppCompatActivity() {
     private val takePictureLauncher = registerForActivityResult(ActivityResultContracts.TakePicture()) { success ->
         if (success && photoUri != null) {
             val intent = Intent(this, IngredientResultsActivity::class.java).apply {
+                data = photoUri
                 putExtra("image_uri", photoUri.toString())
+                addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
             }
             startActivity(intent)
         }
@@ -55,7 +57,9 @@ class HomeActivity : AppCompatActivity() {
     private val pickGalleryLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
         if (uri != null) {
             val intent = Intent(this, IngredientResultsActivity::class.java).apply {
+                data = uri
                 putExtra("image_uri", uri.toString())
+                addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
             }
             startActivity(intent)
         }
@@ -65,12 +69,11 @@ class HomeActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
 
-        auth = FirebaseAuth.getInstance()
         mealRepository = MealRepository()
         favoritesRepository = FavoritesRepository(this)
 
         tvUserEmail = findViewById(R.id.tvUserEmail)
-        tvUserEmail.text = auth.currentUser?.email ?: "Welcome"
+        tvUserEmail.text = try { FirebaseAuth.getInstance().currentUser?.email } catch (_: Exception) { null } ?: "Welcome"
 
         progressBar = findViewById(R.id.progressBar)
         tvEmptyState = findViewById(R.id.tvEmptyState)

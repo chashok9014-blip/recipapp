@@ -82,8 +82,12 @@ class RecipeDetailsActivity : AppCompatActivity() {
         btnYoutube.setOnClickListener {
             currentMeal?.strYoutube?.let { url ->
                 if (url.isNotEmpty()) {
-                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
-                    startActivity(intent)
+                    try {
+                        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+                        startActivity(intent)
+                    } catch (e: Exception) {
+                        Toast.makeText(this, "Unable to open YouTube tutorial", Toast.LENGTH_SHORT).show()
+                    }
                 } else {
                     Toast.makeText(this, "YouTube tutorial not available", Toast.LENGTH_SHORT).show()
                 }

@@ -10,7 +10,6 @@ import com.google.android.material.button.MaterialButton
 import com.google.firebase.auth.FirebaseAuth
 
 class ProfileActivity : AppCompatActivity() {
-    private lateinit var auth: FirebaseAuth
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -18,13 +17,13 @@ class ProfileActivity : AppCompatActivity() {
 
         findViewById<ImageView>(R.id.btnBack).setOnClickListener { finish() }
 
-        auth = FirebaseAuth.getInstance()
-
         val tvProfileEmail = findViewById<TextView>(R.id.tvProfileEmail)
-        tvProfileEmail.text = auth.currentUser?.email ?: "user@example.com"
+        tvProfileEmail.text = try { FirebaseAuth.getInstance().currentUser?.email } catch (_: Exception) { null } ?: "user@example.com"
 
         findViewById<MaterialButton>(R.id.btnLogout).setOnClickListener {
-            auth.signOut()
+            try {
+                FirebaseAuth.getInstance().signOut()
+            } catch (_: Exception) {}
             val intent = Intent(this, LoginActivity::class.java).apply {
                 flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             }
